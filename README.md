@@ -1,4 +1,4 @@
-# PF1 Resistance Check Mod
+# PF2e Drag Measurement Action Icon
 ## Installation
 
 Install through the foundry module browser or use the link below in the manifest input.

@@ -23,7 +23,7 @@ jobs:
         download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/pf2e-drag-measurement-action-icon.zip
 
     # Create a "module.zip" archive containing all the module's required files.
-    - run: zip -r ./pf2e-drag-measurement-action-icon.zip module.json scripts/ images/
+    - run: zip -r ./pf2e-drag-measurement-action-icon.zip module.json thumbnail.webp scripts/ images/
 
     # Update the GitHub release with the manifest and module archive files.
     - name: Update Release With Files

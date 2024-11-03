@@ -21,7 +21,8 @@ function actionIconGetSegmentLabel(wrapped, segment, distance) {
 
         if (units === 'ft' && canvas.activeLayer.name === 'TokenLayer' && game.activeTool === 'select') {
             const actor = canvas.tokens.controlled[0].actor;
-            const actions = Math.ceil(segment.cumulativeCost / actor.system.attributes.speed.total);
+            const actions = Math.ceil((useDifficult ? segment.cumulativeCost : segment.cumulativeDistance) / actor?.system.attributes.speed?.total);
+            if (isNaN(actions)) return label;
             segment.label.text = label;
             sprite.texture = actions > 3 ? fourTexture : actions === 3 ? threeTexture : actions === 2 ? twoTexture : oneTexture;
             segment.label.addChild(sprite);

@@ -11,6 +11,8 @@ Adds action icons to the system's drag measurement distance display to indicate 
 
 Also has an option to use the system's calculation of difficult terrain from scene regions for the distance, and will change the display of measured distance with that increased cost.
 
+![Drag Measurement Preview](thumbnail.webp)
+
 ## Donations
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y8Y5TH8DM)

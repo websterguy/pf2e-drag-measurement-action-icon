@@ -4,10 +4,31 @@ const threeTexture = PIXI.Texture.from('modules/pf2e-drag-measurement-action-ico
 const fourTexture = PIXI.Texture.from('modules/pf2e-drag-measurement-action-icon/images/threeplus.webp');
 const sprite = new PIXI.Sprite(oneTexture);
 
-let useDifficult = false, showOriginal = false;
+let useDifficult = false, showOriginal = false, useUserColor = false;
+
+function positionActionIcon(sprite, segment, token) {
+    const tokenCenter = token.center;
+    const segmentPoint = segment.ray.B;
+    const tokenSize = Math.max(token.width, token.height);
+    
+    // Check if point is within 1.5x token size
+    const distanceToToken = Math.hypot(segmentPoint.x - tokenCenter.x, segmentPoint.y - tokenCenter.y);
+    if (distanceToToken < tokenSize * 1.5) {
+        // Position based on quadrant relative to token
+        const isRightOrAbove = segmentPoint.x > tokenCenter.x || segmentPoint.y < tokenCenter.y;
+        sprite.position.x = isRightOrAbove ? segment.label.width / 2 : -(segment.label.width / 2 + sprite.width);
+        segment.label.position.x += isRightOrAbove ? tokenSize / 2 : -segment.label.width * 1.5;
+    } else {
+        // Position based on movement direction
+        const isMovingRight = segment.ray.angle > -Math.PI/2 && segment.ray.angle < Math.PI/2;
+        sprite.position.x = isMovingRight ? segment.label.width / 2 : -(segment.label.width / 2 + sprite.width);
+    }
+}
 
 function actionIconGetSegmentLabel(wrapped, segment, distance) {
     let label = wrapped(segment);
+    segment.label.style.fill = useUserColor ? game.user.color : "#FFFFFF";
+    sprite.tint = useUserColor ? game.user.color : "#FFFFFF";
     if (game.pf2e.settings.dragMeasurement === "always" || (game.pf2e.settings.dragMeasurement === "encounters" && !!game.combat?.active)) {
         const units = canvas.grid.units;
         if (useDifficult) {
@@ -26,10 +47,12 @@ function actionIconGetSegmentLabel(wrapped, segment, distance) {
             segment.label.text = label;
             sprite.texture = actions > 3 ? fourTexture : actions === 3 ? threeTexture : actions === 2 ? twoTexture : oneTexture;
             segment.label.addChild(sprite);
+            // Scale sprite to match label height
             const scale = segment.label.height / sprite.texture.height;
             sprite.scale.set(scale, scale);
             sprite.position.y = -segment.label.height / 2;
-            sprite.position.x = (segment.label.width / 2);
+
+            positionActionIcon(sprite, segment, canvas.tokens.controlled[0]);
         }
     }
     return label;
@@ -43,6 +66,7 @@ Hooks.once('init', function () {
     registerSettings();
     useDifficult = game.settings.get('pf2e-drag-measurement-action-icon', 'useDifficult') ?? false;
     showOriginal = game.settings.get('pf2e-drag-measurement-action-icon', 'showOriginal') ?? false;
+    useUserColor = game.settings.get('pf2e-drag-measurement-action-icon', 'useUserColor') ?? false;
 });
 
 export const registerSettings = function () {
@@ -66,6 +90,17 @@ export const registerSettings = function () {
         config: true,
         onChange: value => {
             showOriginal = value;
+        }
+    });
+    game.settings.register('pf2e-drag-measurement-action-icon', 'useUserColor', {
+        name: 'Use user color for label',
+        hint: 'Uses the user color for the measurement label instead of the default white color',
+        default: false,
+        scope: "client",
+        type: Boolean,
+        config: true,
+        onChange: value => {
+            useUserColor = value;
         }
     });
   };

@@ -34,7 +34,7 @@ function actionIconGetSegmentLabel(wrapped, segment, distance) {
         if (useDifficult) {
             if (segment.teleport || segment.cumulativeCost === 0) return label;
             if (!(segment.distance === segment.cost && (!segment.last || distance === segment.cumulativeCost))) {
-                let difficultLabel = `⚠ ${ Math.round(segment.cost * 100) / 100 }${ !!units ? ' ' + units : '' } ${ segment.last ? '[' + Math.round(this.totalCost * 100) / 100 + (units ? ' ' + units : '') + ']' : '' }`;
+                let difficultLabel = `\u26A0\uFE0F ${ Math.round(segment.cost * 100) / 100 }${ !!units ? ' ' + units : '' } ${ segment.last ? '[' + Math.round(this.totalCost * 100) / 100 + (units ? ' ' + units : '') + ']' : '' }`;
                 
                 label = showOriginal ? `${label} | ${difficultLabel}` : difficultLabel;
             }
